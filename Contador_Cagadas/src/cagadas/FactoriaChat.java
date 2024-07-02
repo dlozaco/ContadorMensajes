@@ -16,7 +16,7 @@ public class FactoriaChat {
 					.map(FactoriaChat::parseaMensaje);
 			
 		} catch(Exception e) {
-			System.out.println("Error al procesar el archivo: "+e);
+			e.printStackTrace();
 		}
 		return new Chat(mensajes);
 	}
@@ -25,22 +25,26 @@ public class FactoriaChat {
 		String[] trozos = linea.split("-");
 		DateTimeFormatter formato = DateTimeFormatter.ofPattern("D/m/Y, HH:MM");
 		LocalDateTime fechaHora = LocalDateTime.parse(trozos[0].trim(),formato);
-		String[] texto = parseaTexto(trozos[1].trim());
-		String nombre = texto[0].trim();
-		String mensaje = texto[1].trim();
+		String msg = trozos[1].trim();
+		String nombre = "Moderacion";
+		String mensaje = "Moderacion";
+		if(!esModeracionFactoria(msg)) {
+			String[] trozos2 = msg.split(":");
+			nombre = trozos2[0].trim();
+			mensaje = trozos2[1].trim();
+		}
 		return new Mensaje(fechaHora, nombre, mensaje);
 	}
 
-	private static String[] parseaTexto(String texto) {
-		String [] trozos2 = null;
-		try {
-			trozos2 = texto.split(":");
-			
-		}catch(Exception e) {
-			trozos2 = texto.split("");
+	private static Boolean esModeracionFactoria(String texto) {
+		Boolean res = true;
+		for(int i = 0;  i <= texto.length();i++) {
+			if(texto.charAt(i) == ':') {
+				res = false;
+				break;
+			}
 		}
-		return trozos2;
-		
+		return res;
 	}
 
 }
