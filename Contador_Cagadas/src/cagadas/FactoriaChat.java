@@ -9,21 +9,19 @@ import java.util.stream.Stream;
 public class FactoriaChat {
 	
 	public static Chat crearChat(String ruta) {
-		Stream<Mensaje> mensajes = null;
-		try {
-			mensajes = Files.lines(Paths.get(ruta))
-					.skip(1)
-					.map(FactoriaChat::parseaMensaje);
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return new Chat(mensajes);
-	}
+	       try (Stream<Mensaje> mensajes = Files.lines(Paths.get(ruta))
+	               .map(FactoriaChat::parseaMensaje)) {
+	           return new Chat(mensajes);
+	       }
+	       catch (Exception e) {
+	           e.printStackTrace();
+	           return null;
+	           }
+	 }
 	
 	private static Mensaje parseaMensaje(String linea) {
 		String[] trozos = linea.split("-");
-		DateTimeFormatter formato = DateTimeFormatter.ofPattern("D/m/Y, HH:MM");
+		DateTimeFormatter formato = DateTimeFormatter.ofPattern("d/M/yy, H:mm");
 		LocalDateTime fechaHora = LocalDateTime.parse(trozos[0].trim(),formato);
 		String msg = trozos[1].trim();
 		String nombre = "Moderacion";
@@ -38,7 +36,7 @@ public class FactoriaChat {
 
 	private static Boolean esModeracionFactoria(String texto) {
 		Boolean res = true;
-		for(int i = 0;  i <= texto.length();i++) {
+		for(int i = 0;  i <= texto.length()-1;i++) {
 			if(texto.charAt(i) == ':') {
 				res = false;
 				break;
